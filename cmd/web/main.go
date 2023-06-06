@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -12,14 +13,15 @@ import (
 )
 
 type application struct {
-	errorLog *log.Logger
-	infoLog  *log.Logger
-	snippets *models.SnippetModel
+	errorLog      *log.Logger
+	infoLog       *log.Logger
+	snippets      *models.SnippetModel
+	templateCache map[string]*template.Template
 }
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
-	dsn := flag.String("dsn", "root:admin12345@/snippetbox?parseTime=true", "MySQL data source name")
+	dsn := flag.String("dsn", "root:admin1234@tcp(localhost:3038)/snippetbox?parseTime=true", "MySQL data source name")
 
 	flag.Parse()
 
@@ -33,10 +35,17 @@ func main() {
 
 	defer db.Close()
 
+	tc, err := newTemplateCache()
+
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
 	app := &application{
-		infoLog:  infoLog,
-		errorLog: errorLog,
-		snippets: &models.SnippetModel{DB: db},
+		infoLog:       infoLog,
+		errorLog:      errorLog,
+		snippets:      &models.SnippetModel{DB: db},
+		templateCache: tc,
 	}
 
 	infoLog.Printf("Starting server on :%s", *addr)
