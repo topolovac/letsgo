@@ -2,25 +2,9 @@ package main
 
 import (
 	"html/template"
-	"net/http"
 	"path/filepath"
 	"time"
-
-	"snippedbox.matejtop.com/internal/models"
 )
-
-type TemplateData struct {
-	CurrentYear int
-	Snippet     *models.Snippet
-	Snippets    []*models.Snippet
-	Form        any
-}
-
-func (app *application) newTemplateData(r *http.Request) *TemplateData {
-	return &TemplateData{
-		CurrentYear: time.Now().Year(),
-	}
-}
 
 func humanDate(t time.Time) string {
 	return t.Format("02 Jan 2006 at 15:04")

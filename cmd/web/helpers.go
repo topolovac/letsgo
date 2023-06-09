@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"runtime/debug"
+	"time"
+
+	"snippedbox.matejtop.com/internal/models"
 )
 
 func (app *application) serverError(w http.ResponseWriter, err error) {
@@ -43,4 +46,19 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 	w.WriteHeader(status)
 
 	buf.WriteTo(w)
+}
+
+type TemplateData struct {
+	CurrentYear int
+	Snippet     *models.Snippet
+	Snippets    []*models.Snippet
+	Form        any
+	Flash       string
+}
+
+func (app *application) newTemplateData(r *http.Request) *TemplateData {
+	return &TemplateData{
+		CurrentYear: time.Now().Year(),
+		Flash:       app.sessionManager.PopString(r.Context(), "flash"),
+	}
 }
