@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/justinas/nosurf"
 	"snippedbox.matejtop.com/internal/models"
 )
 
@@ -55,6 +56,7 @@ type TemplateData struct {
 	Form            any
 	Flash           string
 	IsAuthenticated bool
+	CSRFToken       string
 }
 
 func (app *application) newTemplateData(r *http.Request) *TemplateData {
@@ -62,6 +64,7 @@ func (app *application) newTemplateData(r *http.Request) *TemplateData {
 		CurrentYear:     time.Now().Year(),
 		Flash:           app.sessionManager.PopString(r.Context(), "flash"),
 		IsAuthenticated: app.isAuthenticated(r),
+		CSRFToken:       nosurf.Token(r),
 	}
 }
 
