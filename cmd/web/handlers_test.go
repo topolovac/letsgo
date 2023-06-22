@@ -224,8 +224,9 @@ func TestSnippetCreate(t *testing.T) {
 		snippetForm.Add("content", "test content")
 		snippetForm.Add("expires", "1")
 
-		code, _, _ = ts.get(t, "/snippet/create")
+		code, _, body = ts.get(t, "/snippet/create")
 
 		assert.Equal(t, code, http.StatusOK)
+		assert.StringContains(t, body, `<form action="/snippet/create" method="POST">`)
 	})
 }
