@@ -1,6 +1,10 @@
 package mocks
 
-import "snippedbox.matejtop.com/internal/models"
+import (
+	"time"
+
+	"snippedbox.matejtop.com/internal/models"
+)
 
 type UserModel struct{}
 
@@ -28,4 +32,19 @@ func (m *UserModel) Exists(id int) (bool, error) {
 	default:
 		return false, nil
 	}
+}
+
+func (m *UserModel) Get(id int) (*models.User, error) {
+	if id != 1 {
+		return nil, models.ErrNoRecord
+	}
+
+	user := &models.User{
+		ID:      1,
+		Email:   "alice@example.com",
+		Name:    "Alice",
+		Created: time.Now(),
+	}
+
+	return user, nil
 }
